@@ -20,7 +20,7 @@ choices = {
 }
 
 # Folder where plots will be saved
-plot_folder = f"./1_plots/{datetime.now().strftime('%Y%m%d_%H_%M_%S')}_continents"
+plot_folder = f"./1_plots/"
 
 # Mapping of continents to their ISO3 country codes
 iso3_by_continent = {
@@ -142,8 +142,6 @@ def plot_scatter_by_continent(backsliding: pd.DataFrame, steady: pd.DataFrame):
         steady (pd.DataFrame): Countries with stable democracy indices.
     """
     global choices, iso3_by_continent
-
-    os.mkdir(plot_folder)
 
     backsliding['type'] = 'backsliding'
     steady['type'] = 'steady'
