@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import numpy as np
 import os
@@ -11,54 +13,15 @@ min_change_ert = 0.1
 start_year = 2000
 
 # Predefined country groupings for plotting
-choices = {
-    "Chosen steady Countries": ['SUR', 'SWE', 'CHE', 'ZAF', 'JPN', 'USA', 'PRT', 'TWN', 'CAN', 'AUS', 'CPV', 'CHL',
-                                'CRI', 'FRA', 'DEU', 'IRL', 'ITA', 'LVA', 'NLD', 'PAN', 'ESP', 'GBR', 'URY', 'NAM',
-                                'TTO', 'AUT', 'BRB', 'BEL', 'CYP', 'DNK', 'EST', 'FIN', 'ISL', 'ISR', 'LTU', 'LUX',
-                                'MLT', 'NZL', 'NOR', 'STP'],
-    "Chosen backsliding Countries": ["IND", "BWA", "HUN", "NIC", "BRA"]
-}
+with open("0_chosen_countries.json", "r") as f:
+    choices = json.load(f)
 
 # Folder where plots will be saved
 plot_folder = f"./1_plots/"
 
 # Mapping of continents to their ISO3 country codes
-iso3_by_continent = {
-        "Africa": [
-            "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM",
-            "COG", "COD", "CIV", "DJI", "EGY", "GNQ", "ERI", "SWZ", "ETH", "GAB", "GMB",
-            "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT",
-            "MUS", "MYT", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP", "SEN", "SYC",
-            "SLE", "SOM", "ZAF", "SSD", "SDN", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE"
-        ],
-        "Asia": [
-            "AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "CYP", "GEO",
-            "HKG", "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KWT", "KGZ",
-            "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "OMN", "PAK",
-            "PSE", "PHL", "QAT", "SAU", "SGP", "KOR", "LKA", "SYR", "TWN", "TJK", "THA",
-            "TLS", "TUR", "TKM", "ARE", "UZB", "VNM", "YEM"
-        ],
-        "Europe": [
-            "ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CZE", "DNK", "EST",
-            "FRO", "FIN", "FRA", "DEU", "GIB", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA",
-            "LIE", "LTU", "LUX", "MLT", "MDA", "MCO", "MNE", "NLD", "MKD", "NOR", "POL",
-            "PRT", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SJM", "SWE", "CHE",
-            "UKR", "GBR", "VAT"
-        ],
-        "America North": [
-            "ATG", "ABW", "BHS", "BRB", "BLZ", "BMU", "CAN", "CRI", "CUB", "CUW", "DMA",
-            "DOM", "SLV", "GRL", "GRD", "GLP", "GTM", "HTI", "HND", "JAM", "MTQ", "MEX",
-            "MSR", "NIC", "PAN", "PRI", "KNA", "LCA", "VCT", "TTO", "TCA", "USA", "VIR"
-        ],
-        "America South": [
-            "ARG", "BOL", "BRA", "CHL", "COL", "ECU", "GUY", "PRY", "PER", "SUR", "URY", "VEN"
-        ],
-        "Oceania": [
-            "ASM", "AUS", "CCK", "CXR", "FJI", "PYF", "GUM", "KIR", "MHL", "FSM", "NRU",
-            "NCL", "NZL", "NIU", "NFK", "MNP", "PLW", "PNG", "WSM", "SLB", "TKL", "TON",
-            "TUV", "VUT", "WLF"
-        ]
-    }
+with open("0_iso3_by_continent.json", "r") as f:
+    iso3_by_continent = json.load(f)
 
 
 def load_data(ert_path: str, polity_path: str) -> tuple[pd.DataFrame, pd.DataFrame]:

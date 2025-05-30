@@ -1,0 +1,7 @@
+{
+    "Chosen steady Countries": ["SUR", "SWE", "CHE", "ZAF", "JPN", "USA", "PRT", "TWN", "CAN", "AUS", "CPV", "CHL",
+                                "CRI", "FRA", "DEU", "IRL", "ITA", "LVA", "NLD", "PAN", "ESP", "GBR", "URY", "NAM",
+                                "TTO", "AUT", "BRB", "BEL", "CYP", "DNK", "EST", "FIN", "ISL", "ISR", "LTU", "LUX",
+                                "MLT", "NZL", "NOR", "STP"],
+    "Chosen backsliding Countries": ["IND", "BWA", "HUN", "NIC", "BRA"]
+}
