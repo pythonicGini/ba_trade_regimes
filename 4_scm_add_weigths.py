@@ -31,7 +31,8 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
 
     return control, treated
 
-def define_synthetic_controls(control: pd.DataFrame, treated: pd.DataFrame) -> pd.DataFrame:
+
+def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFrame]:
     predictors = [
         "gdp",
         "population",
@@ -39,12 +40,12 @@ def define_synthetic_controls(control: pd.DataFrame, treated: pd.DataFrame) -> p
         #"net_trade_goods",
     ]
 
+    weight_dict = {}
+
     for treated_country in treatment_periods.keys():
-        print(treated_country)
         df_treated_country = treated.loc[treated["iso3_country_code"] == treated_country]
         pre_period = treatment_periods[treated_country]["pre"]
         treat_period = treatment_periods[treated_country]["treat"]
-        post_period = treatment_periods[treated_country]["post"]
 
         control_pre = control.loc[(pre_period[0] <= control["year"]) & (control["year"] <= pre_period[1])]
         treated_pre = df_treated_country.loc[(pre_period[0] <= df_treated_country["year"]) & (df_treated_country["year"] <= pre_period[1])]
@@ -67,15 +68,39 @@ def define_synthetic_controls(control: pd.DataFrame, treated: pd.DataFrame) -> p
         weight_df = pd.DataFrame({"country": X_control.index,
                                   "weight": weights}).sort_values("weight", ascending=False)
 
-        print(weight_df)
-        break
+        weight_dict[treated_country] = weight_df
 
-    return
+
+    return weight_dict
+
+
+def make_synthetic_controls(weights: dict) -> dict:
+    df_steady_countries = pd.read_csv("3_trade_data_with_regime_indices/steady_countries_trade_and_regime.csv")
+
+    synthetic_controls = {}
+
+    for treated_country in weights.keys():
+        treated_weights = weights[treated_country]
+        treated_weights: pd.DataFrame
+
+        controls_df = df_steady_countries.loc[df_steady_countries["reporterISO"].isin(treated_weights["country"].unique())]
+        controls_df = controls_df.merge(treated_weights, left_on="reporterISO", right_on="country", how="left").drop("country", axis=1)
+
+        controls_df["weighted_share"] = controls_df["share"] * controls_df["weight"]
+
+
+        controls_df = controls_df.groupby(["refYear", "flowCode", "regime_index"], as_index=False)["weighted_share"].sum()
+        controls_df.rename(columns={"weighted_share": "share"}, inplace=True)
+        synthetic_controls[treated_country] = controls_df
+
+    return synthetic_controls
 
 
 def main():
     control, treated = load_and_pre_filter_weight_data()
-    define_synthetic_controls(control, treated)
+    weights = do_scm(control, treated)
+    synthetic_controls = make_synthetic_controls(weights)
+
     return
 
 
