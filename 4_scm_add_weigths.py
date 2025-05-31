@@ -115,10 +115,32 @@ def make_plot(synthetic_controls: dict) -> None:
                         }
 
     for country in synthetic_controls.keys():
-        print(country)
-
         df_synthetic = synthetic_controls[country]
         df_country = df_backsliding.loc[df_backsliding["reporterISO"] == country]
+
+        treat_start = treatment_periods[country]["treat"][0]
+        treat_end = treatment_periods[country]["treat"][1]
+
+        treat_start_line = go.Scatter(
+            x=[treat_start] * 100,
+            y=list(range(-1,101,1)),
+            mode='lines',
+            text=f"treatment_start",
+            line=dict(dash='dash', width=1, color='green'),
+            hoverinfo="text",
+            showlegend=False,
+            meta = country
+        )
+        treat_end_line = go.Scatter(
+            x=[treat_end] * 100,
+            y=list(range(-1,101,1)),
+            mode='lines',
+            line=dict(dash='dash', width=1, color='green'),
+            text=f"treatment_end",
+            hoverinfo="text",
+            showlegend=False,
+            meta = country
+        )
 
         for flow_code in flow_codes:
             for regime_index in regime_indices:
@@ -151,22 +173,20 @@ def make_plot(synthetic_controls: dict) -> None:
 
                 fig.add_trace(plot_treated, row = row, col = col)
                 fig.add_trace(plot_synthetic, row = row, col = col)
+                fig.add_trace(treat_start_line, row = row, col = col)
+                fig.add_trace(treat_end_line, row = row, col = col)
 
     buttons = []
     visibility = []
 
     for trace in fig.data:
-        if trace.meta == "Mean":
-            trace.visible = True
-            visibility.append(True)
-        else:
-            trace.visible = False
-            visibility.append(False)
+        trace.visible = False
+        visibility.append(False)
 
     buttons.append(dict(
         label="None",
         method="update",
-        args=[{"visible": visibility}]
+        args=[{"visible": visibility}],
     ))
 
     for country in synthetic_controls.keys():
@@ -176,6 +196,7 @@ def make_plot(synthetic_controls: dict) -> None:
                 visibility.append(True)
             else:
                 visibility.append(False)
+
         buttons.append(dict(
             label=country,
             method="update",
