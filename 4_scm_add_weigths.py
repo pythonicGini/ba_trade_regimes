@@ -3,6 +3,9 @@ import json
 import numpy as np
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
 
 with open("0_chosen_countries.json", "r") as f:
     json_data = json.load(f)
@@ -95,12 +98,116 @@ def make_synthetic_controls(weights: dict) -> dict:
 
     return synthetic_controls
 
+def make_plot(synthetic_controls: dict) -> None:
+    df_backsliding = pd.read_csv("3_trade_data_with_regime_indices/backsliding_countries_trade_and_regime.csv")
+
+    regime_indices = [0, 1, 2, 3]
+    flow_codes = ["M", "X"]
+
+    fig = make_subplots(rows=2,
+                        cols=2,
+                        subplot_titles=[f"Trade with regime of index {int(r)}" for r in regime_indices])
+
+    regime_positions = {0: [1, 1],
+                        1: [1, 2],
+                        2: [2, 1],
+                        3: [2, 2],
+                        }
+
+    for country in synthetic_controls.keys():
+        print(country)
+
+        df_synthetic = synthetic_controls[country]
+        df_country = df_backsliding.loc[df_backsliding["reporterISO"] == country]
+
+        for flow_code in flow_codes:
+            for regime_index in regime_indices:
+                row, col = regime_positions[regime_index]
+
+                treated = df_country.loc[(df_country["flowCode"] == flow_code) & (df_country["regime_index"] == regime_index)]
+                synthetic = df_synthetic.loc[(df_synthetic["flowCode"] == flow_code) & (df_synthetic["regime_index"] == regime_index)]
+
+                plot_treated = go.Scatter(
+                    x=treated["refYear"],
+                    y=treated["share"],
+                    mode='lines+markers',
+                    marker={"color": "blue" if flow_code == "M" else "red"},
+                    text=f"{'Import' if flow_code == 'M' else 'Export'} of {country}",
+                    hoverinfo="x+y+text",
+                    showlegend=False,
+                    meta=country,
+                )
+
+                plot_synthetic = go.Scatter(
+                    x=synthetic["refYear"],
+                    y=synthetic["share"],
+                    mode='lines+markers',
+                    marker={"color": "MediumSlateBlue" if flow_code == "X" else "PaleVioletRed"},
+                    text=f"{'Import' if flow_code == 'X' else 'Export'} of synthetic_{country}",
+                    hoverinfo="x+y+text",
+                    showlegend=False,
+                    meta=country
+                )
+
+                fig.add_trace(plot_treated, row = row, col = col)
+                fig.add_trace(plot_synthetic, row = row, col = col)
+
+    buttons = []
+    visibility = []
+
+    for trace in fig.data:
+        if trace.meta == "Mean":
+            trace.visible = True
+            visibility.append(True)
+        else:
+            trace.visible = False
+            visibility.append(False)
+
+    buttons.append(dict(
+        label="None",
+        method="update",
+        args=[{"visible": visibility}]
+    ))
+
+    for country in synthetic_controls.keys():
+        visibility = []
+        for trace in fig.data:
+            if trace.meta == country or trace.meta == "Mean":
+                visibility.append(True)
+            else:
+                visibility.append(False)
+        buttons.append(dict(
+            label=country,
+            method="update",
+            args=[{"visible": visibility}]
+        ))
+
+    fig.update_yaxes(range=[0, 100])
+    fig.update_yaxes(title="Percentage of trade")
+    fig.update_xaxes(range=[1997, 2027])
+    fig.update_xaxes(title="year")
+    fig.update_layout(
+        updatemenus=[{
+            "buttons": buttons,
+            "direction": "down",
+            "showactive": False,
+            "x": 1.05,
+            "y": 1.1
+        }],
+        title_text="Summarized tradevolume (Import and Export) in % with countries of different regime indices ",
+    )
+
+    fig.show()
+
+    return
+
+
 
 def main():
     control, treated = load_and_pre_filter_weight_data()
     weights = do_scm(control, treated)
     synthetic_controls = make_synthetic_controls(weights)
-
+    make_plot(synthetic_controls)
     return
 
 
