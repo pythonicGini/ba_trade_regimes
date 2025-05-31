@@ -192,7 +192,7 @@ def make_plot(synthetic_controls: dict) -> None:
     for country in synthetic_controls.keys():
         visibility = []
         for trace in fig.data:
-            if trace.meta == country or trace.meta == "Mean":
+            if trace.meta == country:
                 visibility.append(True)
             else:
                 visibility.append(False)
