@@ -27,6 +27,10 @@ def main() -> None:
     backsliding_df = backsliding_df.groupby(["reporterISO", "flowCode", "refYear", "regime_index"], as_index=False)["primaryValue"].sum()
     steady_df = steady_df.groupby(["reporterISO", "flowCode", "refYear", "regime_index"], as_index=False)["primaryValue"].sum()
 
+    backsliding_df["share"] = backsliding_df.groupby(["reporterISO", "flowCode", "refYear"])["primaryValue"].transform(lambda x: x / x.sum() * 100).round(2)
+    steady_df["share"] = steady_df.groupby(["reporterISO", "flowCode", "refYear"])["primaryValue"].transform(lambda x: x / x.sum() * 100).round(2)
+
+
     backsliding_df.to_csv("./3_trade_data_with_regime_indices/backsliding_countries_trade_and_regime.csv", encoding="utf-8", index=False)
     steady_df.to_csv("./3_trade_data_with_regime_indices/steady_countries_trade_and_regime.csv", encoding="utf-8", index=False)
     return
