@@ -15,6 +15,19 @@ with open("0_chosen_countries.json", "r") as f:
 with open("0_treatment_periods.json", "r") as f:
     treatment_periods = json.load(f)
 
+PREDICTORS = [
+        "gdp",
+        "population",
+        "gdp_pc",
+        "merchandise_trade",
+        "FDI",
+        "unemployment",
+        "gdp_growth"
+    ]
+
+
+
+
 def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     name_mapping = {
         "Country Name":                                                         "country",
@@ -24,24 +37,50 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
         "Population, total [SP.POP.TOTL]":                                      "population",
         "GDP per capita, PPP (current international $) [NY.GDP.PCAP.PP.CD]":    "gdp_pc",
         "Net trade in goods (BoP, current US$) [BN.GSR.MRCH.CD]":               "net_trade_goods",
+        "Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]":                     "merchandise_trade",
+        "Foreign direct investment, net (BoP, current US$) [BN.KLT.DINV.CD]":   "FDI",
+        "Unemployment, total (% of total labor force) (national estimate) [SL.UEM.TOTL.NE.ZS]": "unemployment",
+        "GDP growth (annual %) [NY.GDP.MKTP.KD.ZG]":                            "gdp_growth",
+        "Exports of goods and services (annual % growth) [NE.EXP.GNFS.KD.ZG]":  "export_growth",
+        "Imports of goods and services (annual % growth) [NE.IMP.GNFS.KD.ZG]":  "import_growth",
+        "Tariff rate, applied, weighted mean, all products (%) [TM.TAX.MRCH.WM.AR.ZS]": "tariff_rate",
     }
+
+    relevant_cols = PREDICTORS + ["country", "iso3_country_code", "year"]
 
     df = pd.read_csv("./0_raw_data/weight_data/world_bank_weight_data.csv", skipfooter=5, engine='python')
     df = df.rename(columns=name_mapping)
 
-    control = df.loc[df["iso3_country_code"].isin(steady_countries)]
-    treated = df.loc[df["iso3_country_code"].isin(backsliding_countries)]
+    control = df.loc[df["iso3_country_code"].isin(steady_countries)][relevant_cols]
+    treated = df.loc[df["iso3_country_code"].isin(backsliding_countries)][relevant_cols]
+    control = interpolate_df(control)
+    treated = interpolate_df(treated)
+
+    print(control.isnull().sum())
+    print(treated.isnull().sum())
 
     return control, treated
 
 
+def interpolate_df(df: pd.DataFrame) -> pd.DataFrame:
+    df_interpolated = df.copy()
+
+    # Ensure the data is sorted for meaningful interpolation
+    df_interpolated = df_interpolated.sort_values(by=['country', 'year'])
+
+    # Interpolate numeric columns grouped by 'country'
+    for col in df.columns:
+        if col in PREDICTORS:
+            df_interpolated[col] = (
+                df_interpolated
+                .groupby('country')[col]
+                .transform(lambda group: group.interpolate(method='linear', limit_direction='both'))
+            )
+
+    return df_interpolated
+
+
 def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    predictors = [
-        "gdp",
-        "population",
-        "gdp_pc",
-        #"net_trade_goods",
-    ]
 
     weight_dict = {}
 
@@ -54,9 +93,8 @@ def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFra
         treated_pre = df_treated_country.loc[(pre_period[0] <= df_treated_country["year"]) & (df_treated_country["year"] <= pre_period[1])]
 
 
-        X_control = control_pre.groupby("iso3_country_code")[predictors].mean()
-        X_treated = treated_pre.groupby("iso3_country_code")[predictors].mean()
-
+        X_control = control_pre.groupby("iso3_country_code")[PREDICTORS].mean()
+        X_treated = treated_pre.groupby("iso3_country_code")[PREDICTORS].mean()
 
         scaler = StandardScaler()
         X_control_scaled = scaler.fit_transform(X_control)
