@@ -16,13 +16,19 @@ with open("0_treatment_periods.json", "r") as f:
     treatment_periods = json.load(f)
 
 PREDICTORS = [
-        "gdp",
-        "population",
-        "gdp_pc",
-        "merchandise_trade",
-        "FDI",
-        "unemployment",
-        "gdp_growth"
+        "GDP per capita, PPP (current international $) [NY.GDP.PCAP.PP.CD]",
+        "Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]",
+        "Unemployment, total (% of total labor force) (national estimate) [SL.UEM.TOTL.NE.ZS]",
+        "GDP growth (annual %) [NY.GDP.MKTP.KD.ZG]",
+        "Control of Corruption: Estimate [CC.EST]",
+        #"External debt stocks (% of GNI) [DT.DOD.DECT.GN.ZS]",
+        "Inflation, consumer prices (annual %) [FP.CPI.TOTL.ZG]",
+        "General government final consumption expenditure (% of GDP) [NE.CON.GOVT.ZS]",
+        "Trade (% of GDP) [NE.TRD.GNFS.ZS]",
+        "Tax revenue (% of GDP) [GC.TAX.TOTL.GD.ZS]",
+        #"Literacy rate, adult total (% of people ages 15 and above) [SE.ADT.LITR.ZS]",
+        "Life expectancy at birth, total (years) [SP.DYN.LE00.IN]",
+        "Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population) [SI.POV.DDAY]"
     ]
 
 
@@ -33,17 +39,6 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
         "Country Name":                                                         "country",
         "Country Code":                                                         "iso3_country_code",
         "Time":                                                                 "year",
-        "GDP (current US$) [NY.GDP.MKTP.CD]":                                   "gdp",
-        "Population, total [SP.POP.TOTL]":                                      "population",
-        "GDP per capita, PPP (current international $) [NY.GDP.PCAP.PP.CD]":    "gdp_pc",
-        "Net trade in goods (BoP, current US$) [BN.GSR.MRCH.CD]":               "net_trade_goods",
-        "Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]":                     "merchandise_trade",
-        "Foreign direct investment, net (BoP, current US$) [BN.KLT.DINV.CD]":   "FDI",
-        "Unemployment, total (% of total labor force) (national estimate) [SL.UEM.TOTL.NE.ZS]": "unemployment",
-        "GDP growth (annual %) [NY.GDP.MKTP.KD.ZG]":                            "gdp_growth",
-        "Exports of goods and services (annual % growth) [NE.EXP.GNFS.KD.ZG]":  "export_growth",
-        "Imports of goods and services (annual % growth) [NE.IMP.GNFS.KD.ZG]":  "import_growth",
-        "Tariff rate, applied, weighted mean, all products (%) [TM.TAX.MRCH.WM.AR.ZS]": "tariff_rate",
     }
 
     relevant_cols = PREDICTORS + ["country", "iso3_country_code", "year"]
@@ -56,8 +51,24 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     control = interpolate_df(control)
     treated = interpolate_df(treated)
 
+    for index, value in control.isnull().sum().items():
+        if value > len(control) * 0.1:
+            print(control.isnull().sum())
+            raise Exception(f"To many NA Values in column {index}")
+        if value > 0:
+            mean = control[index].mean()
+            control[index] = control[index].fillna(mean)
+
     print(control.isnull().sum())
-    print(treated.isnull().sum())
+
+    print("_" * 40)
+
+    for index, value in treated.isnull().sum().items():
+        if value > len(treated) * 0.1:
+            print(treated.isnull().sum())
+            raise Exception(f"To many NA Values in column {index}")
+
+    print(control.isnull().sum())
 
     return control, treated
 
@@ -79,6 +90,8 @@ def interpolate_df(df: pd.DataFrame) -> pd.DataFrame:
 
     return df_interpolated
 
+def fill_na_with_mean(df: pd.DataFrame) -> pd.DataFrame:
+    return
 
 def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
