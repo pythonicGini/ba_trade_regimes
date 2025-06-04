@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 # Thresholds and constants for filtering and analysis
 threshold_ert_changed = 0.5
-threshold_ert_steady = 0.7
+threshold_ert_steady = 0.5
 min_change_ert = 0.1
 start_year = 2000
 
@@ -74,7 +74,7 @@ def prefilter_ert(ert: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
             continue
 
         # Classify as steady if values consistently exceed "steady" threshold
-        elif max_v2x >= threshold_ert_steady:
+        elif min_v2x >= threshold_ert_steady:
             steady_countries.append(country)
 
     changed = ert.loc[ert["country_text_id"].isin(changed_countries)]

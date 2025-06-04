@@ -55,20 +55,14 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
         if value > len(control) * 0.1:
             print(control.isnull().sum())
             raise Exception(f"To many NA Values in column {index}")
-        if value > 0:
+        elif value > 0:
             mean = control[index].mean()
             control[index] = control[index].fillna(mean)
-
-    print(control.isnull().sum())
-
-    print("_" * 40)
 
     for index, value in treated.isnull().sum().items():
         if value > len(treated) * 0.1:
             print(treated.isnull().sum())
             raise Exception(f"To many NA Values in column {index}")
-
-    print(control.isnull().sum())
 
     return control, treated
 
@@ -90,8 +84,6 @@ def interpolate_df(df: pd.DataFrame) -> pd.DataFrame:
 
     return df_interpolated
 
-def fill_na_with_mean(df: pd.DataFrame) -> pd.DataFrame:
-    return
 
 def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
@@ -168,7 +160,8 @@ def make_plot(synthetic_controls: dict) -> None:
     for country in synthetic_controls.keys():
         df_synthetic = synthetic_controls[country]
         df_country = df_backsliding.loc[df_backsliding["reporterISO"] == country]
-
+        if country == "GRC":
+            print(df_country)
         treat_start = treatment_periods[country]["treat"][0]
         treat_end = treatment_periods[country]["treat"][1]
 
@@ -268,7 +261,7 @@ def make_plot(synthetic_controls: dict) -> None:
         }],
         title_text="Summarized tradevolume (Import and Export) in % with countries of different regime indices ",
     )
-
+    fig.write_html("1_plots/SCM_Plot.html")
     fig.show()
 
     return
