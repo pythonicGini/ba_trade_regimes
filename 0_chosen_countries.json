@@ -13,7 +13,11 @@
     "POL",
     "HND",
     "BOL",
-    "ECU"
+    "ECU",
+    "DEU"
+  ],
+  "Chosen robustness Countries": [
+
   ],
   "Chosen steady Countries": [
     "SUR",

@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 import numpy as np
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import Ridge, ElasticNet
 from sklearn.preprocessing import StandardScaler
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -17,18 +17,23 @@ with open("0_treatment_periods.json", "r") as f:
 
 PREDICTORS = [
         "GDP per capita, PPP (current international $) [NY.GDP.PCAP.PP.CD]",
-        "Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]",
+        #"Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]",
         "Unemployment, total (% of total labor force) (national estimate) [SL.UEM.TOTL.NE.ZS]",
         "GDP growth (annual %) [NY.GDP.MKTP.KD.ZG]",
         "Control of Corruption: Estimate [CC.EST]",
-        #"External debt stocks (% of GNI) [DT.DOD.DECT.GN.ZS]",
+        # "External debt stocks (% of GNI) [DT.DOD.DECT.GN.ZS]",
         "Inflation, consumer prices (annual %) [FP.CPI.TOTL.ZG]",
         "General government final consumption expenditure (% of GDP) [NE.CON.GOVT.ZS]",
-        "Trade (% of GDP) [NE.TRD.GNFS.ZS]",
+        #"Trade (% of GDP) [NE.TRD.GNFS.ZS]",
         "Tax revenue (% of GDP) [GC.TAX.TOTL.GD.ZS]",
-        #"Literacy rate, adult total (% of people ages 15 and above) [SE.ADT.LITR.ZS]",
+        # "Literacy rate, adult total (% of people ages 15 and above) [SE.ADT.LITR.ZS]",
         "Life expectancy at birth, total (years) [SP.DYN.LE00.IN]",
-        "Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population) [SI.POV.DDAY]"
+        "Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population) [SI.POV.DDAY]",
+        #"Taxes on international trade (% of revenue) [GC.TAX.INTT.RV.ZS]",
+        "Tariff rate, applied, simple mean, all products (%) [TM.TAX.MRCH.SM.AR.ZS]",
+        "Rule of Law: Percentile Rank [RL.PER.RNK]",
+        "Regulatory Quality: Percentile Rank [RQ.PER.RNK]",
+        "Political Stability and Absence of Violence/Terrorism: Percentile Rank [PV.PER.RNK]"
     ]
 
 
@@ -50,7 +55,6 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     treated = df.loc[df["iso3_country_code"].isin(backsliding_countries)][relevant_cols]
     control = interpolate_df(control)
     treated = interpolate_df(treated)
-
     for index, value in control.isnull().sum().items():
         if value > len(control) * 0.1:
             print(control.isnull().sum())
@@ -94,28 +98,29 @@ def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFra
         pre_period = treatment_periods[treated_country]["pre"]
         treat_period = treatment_periods[treated_country]["treat"]
 
-        control_pre = control.loc[(pre_period[0] <= control["year"]) & (control["year"] <= pre_period[1])]
+        control_pre = control.loc[control["iso3_country_code"] != treated_country]
+        control_pre = control_pre.loc[(pre_period[0] <= control_pre["year"]) & (control_pre["year"] <= pre_period[1])]
         treated_pre = df_treated_country.loc[(pre_period[0] <= df_treated_country["year"]) & (df_treated_country["year"] <= pre_period[1])]
-
 
         X_control = control_pre.groupby("iso3_country_code")[PREDICTORS].mean()
         X_treated = treated_pre.groupby("iso3_country_code")[PREDICTORS].mean()
 
+        x_all = pd.concat([X_control, X_treated], ignore_index=True)
         scaler = StandardScaler()
-        X_control_scaled = scaler.fit_transform(X_control)
-        X_treated_scaled = scaler.transform(X_treated)
+        X_all_scaled = scaler.fit_transform(x_all)
+        X_control_scaled = X_all_scaled[:-1]
+        X_treated_scaled = X_all_scaled[-1]
 
         ridge = Ridge(alpha=1e-5, fit_intercept=False, positive=True)
         ridge.fit(X_control_scaled.T, X_treated_scaled.T)
 
-        weights = ridge.coef_.flatten()
+        weights = ridge.coef_
         weights /= weights.sum()
 
         weight_df = pd.DataFrame({"country": X_control.index,
                                   "weight": weights}).sort_values("weight", ascending=False)
 
         weight_dict[treated_country] = weight_df
-
 
     return weight_dict
 
