@@ -17,7 +17,7 @@ with open("0_treatment_periods.json", "r") as f:
 
 PREDICTORS = [
         "GDP per capita, PPP (current international $) [NY.GDP.PCAP.PP.CD]",
-        #"Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]",
+        "Merchandise trade (% of GDP) [TG.VAL.TOTL.GD.ZS]",
         "Unemployment, total (% of total labor force) (national estimate) [SL.UEM.TOTL.NE.ZS]",
         "GDP growth (annual %) [NY.GDP.MKTP.KD.ZG]",
         "Control of Corruption: Estimate [CC.EST]",
@@ -41,9 +41,9 @@ PREDICTORS = [
 
 def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     name_mapping = {
-        "Country Name":                                                         "country",
-        "Country Code":                                                         "iso3_country_code",
-        "Time":                                                                 "year",
+        "Country Name": "country",
+        "Country Code": "iso3_country_code",
+        "Time":         "year",
     }
 
     relevant_cols = PREDICTORS + ["country", "iso3_country_code", "year"]
@@ -88,6 +88,42 @@ def interpolate_df(df: pd.DataFrame) -> pd.DataFrame:
 
     return df_interpolated
 
+def add_trade_data(control: pd.DataFrame, treated: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+    name_map = {
+        "reporterISO": "iso3_country_code",
+        "refYear": "year"
+    }
+    df_control_trade = pd.read_csv("./3_trade_data_with_regime_indices/steady_countries_trade_and_regime.csv")
+    df_treated_trade = pd.read_csv("./3_trade_data_with_regime_indices/backsliding_countries_trade_and_regime.csv")
+
+    df_control_trade = df_control_trade.pivot_table(index=["reporterISO", "refYear"], columns=["flowCode", "regime_index"], values="share")
+    df_control_trade.columns = [f'regime_{int(col[1])}_{col[0]}_share' for col in df_control_trade.columns]
+    df_control_trade = df_control_trade.reset_index()
+    df_control_trade = df_control_trade.rename(columns=name_map)
+    control = control.merge(df_control_trade)
+
+    df_treated_trade = df_treated_trade.pivot_table(index=["reporterISO", "refYear"],
+                                                    columns=["flowCode", "regime_index"], values="share")
+    df_treated_trade.columns = [f'regime_{int(col[1])}_{col[0]}_share' for col in df_treated_trade.columns]
+    df_treated_trade = df_treated_trade.reset_index()
+    df_treated_trade = df_treated_trade.rename(columns=name_map)
+    treated = treated.merge(df_treated_trade)
+
+    global PREDICTORS
+
+    PREDICTORS += [
+        'regime_0_M_share',
+        'regime_1_M_share',
+        'regime_2_M_share',
+        'regime_3_M_share',
+        'regime_0_X_share',
+        'regime_1_X_share',
+        'regime_2_X_share',
+        'regime_3_X_share'
+    ]
+
+    return control, treated
+
 
 def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
@@ -111,7 +147,7 @@ def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFra
         X_control_scaled = X_all_scaled[:-1]
         X_treated_scaled = X_all_scaled[-1]
 
-        ridge = Ridge(alpha=1e-5, fit_intercept=False, positive=True)
+        ridge = Ridge(alpha=1, fit_intercept=False, positive=True)
         ridge.fit(X_control_scaled.T, X_treated_scaled.T)
 
         weights = ridge.coef_
@@ -121,7 +157,6 @@ def do_scm(control: pd.DataFrame, treated: pd.DataFrame) -> dict[str, pd.DataFra
                                   "weight": weights}).sort_values("weight", ascending=False)
 
         weight_dict[treated_country] = weight_df
-
     return weight_dict
 
 
@@ -165,8 +200,6 @@ def make_plot(synthetic_controls: dict) -> None:
     for country in synthetic_controls.keys():
         df_synthetic = synthetic_controls[country]
         df_country = df_backsliding.loc[df_backsliding["reporterISO"] == country]
-        if country == "GRC":
-            print(df_country)
         treat_start = treatment_periods[country]["treat"][0]
         treat_end = treatment_periods[country]["treat"][1]
 
@@ -275,7 +308,10 @@ def make_plot(synthetic_controls: dict) -> None:
 
 def main():
     control, treated = load_and_pre_filter_weight_data()
+    control, treated = add_trade_data(control, treated)
     weights = do_scm(control, treated)
+    pd.concat([weights[x] for x in weights.keys()]).to_csv("9_weights_1.csv")
+    return
     synthetic_controls = make_synthetic_controls(weights)
     make_plot(synthetic_controls)
     return

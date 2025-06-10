@@ -1,0 +1,497 @@
+{
+    "ARG": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "ARM": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BEN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BFA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BGD": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BGR": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BIH": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BOL": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "BRA": {
+        "dem": "backsliding",
+        "treat_start": 2014,
+        "treat_end": 2019
+    },
+    "BWA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "CIV": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "CZE": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "DOM": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "ECU": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "FJI": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GEO": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GHA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GNB": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GRC": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GTM": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "GUY": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "HND": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "HRV": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "HUN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "IDN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "IND": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "KEN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "KOR": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "LBY": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "LKA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "LSO": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MDA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MDG": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MDV": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MEX": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MKD": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MLI": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MNG": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "MUS": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "NER": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "NIC": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "NPL": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "PER": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "PHL": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "POL": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "PSE": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "ROU": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SEN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SLE": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SLV": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SRB": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SVK": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "SVN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "THA": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "TUN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "TUR": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "UKR": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "VEN": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "ZMB": {
+        "dem": "backsliding",
+        "treat_start": null,
+        "treat_end": null
+    },
+    "AUS": {
+        "dem": "steady",
+        "treat_start": 2010,
+        "treat_end": 2013
+    },
+    "AUT": {
+        "dem": "steady",
+        "treat_start": 2014,
+        "treat_end": 2017
+    },
+    "BEL": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2011
+    },
+    "BRB": {
+        "dem": "steady",
+        "treat_start": 2013,
+        "treat_end": 2018
+    },
+    "CAN": {
+        "dem": "steady",
+        "treat_start": 2005,
+        "treat_end": 2008
+    },
+    "CHE": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2019
+    },
+    "CHL": {
+        "dem": "steady",
+        "treat_start": 2010,
+        "treat_end": 2014
+    },
+    "CPV": {
+        "dem": "steady",
+        "treat_start": 2007,
+        "treat_end": 2011
+    },
+    "CRI": {
+        "dem": "steady",
+        "treat_start": 2009,
+        "treat_end": 2013
+    },
+    "CYP": {
+        "dem": "steady",
+        "treat_start": 2011,
+        "treat_end": 2014
+    },
+    "DEU": {
+        "dem": "steady",
+        "treat_start": 2013,
+        "treat_end": 2016
+    },
+    "DNK": {
+        "dem": "steady",
+        "treat_start": 2005,
+        "treat_end": 2010
+    },
+    "ESP": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2012
+    },
+    "EST": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2020
+    },
+    "FIN": {
+        "dem": "steady",
+        "treat_start": 2012,
+        "treat_end": 2016
+    },
+    "FRA": {
+        "dem": "steady",
+        "treat_start": 2009,
+        "treat_end": 2014
+    },
+    "GBR": {
+        "dem": "steady",
+        "treat_start": 2006,
+        "treat_end": 2009
+    },
+    "IRL": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2011
+    },
+    "ISL": {
+        "dem": "steady",
+        "treat_start": 2007,
+        "treat_end": 2010
+    },
+    "ISR": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2011
+    },
+    "ITA": {
+        "dem": "steady",
+        "treat_start": 2005,
+        "treat_end": 2009
+    },
+    "JPN": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2019
+    },
+    "LTU": {
+        "dem": "steady",
+        "treat_start": 2006,
+        "treat_end": 2010
+    },
+    "LUX": {
+        "dem": "steady",
+        "treat_start": 2006,
+        "treat_end": 2011
+    },
+    "LVA": {
+        "dem": "steady",
+        "treat_start": 2013,
+        "treat_end": 2016
+    },
+    "MLT": {
+        "dem": "steady",
+        "treat_start": 2014,
+        "treat_end": 2017
+    },
+    "NAM": {
+        "dem": "steady",
+        "treat_start": 2012,
+        "treat_end": 2017
+    },
+    "NLD": {
+        "dem": "steady",
+        "treat_start": 2005,
+        "treat_end": 2009
+    },
+    "NOR": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2018
+    },
+    "NZL": {
+        "dem": "steady",
+        "treat_start": 2007,
+        "treat_end": 2010
+    },
+    "PAN": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2020
+    },
+    "PRT": {
+        "dem": "steady",
+        "treat_start": 2012,
+        "treat_end": 2017
+    },
+    "PRY": {
+        "dem": "steady",
+        "treat_start": 2005,
+        "treat_end": 2008
+    },
+    "STP": {
+        "dem": "steady",
+        "treat_start": 2012,
+        "treat_end": 2017
+    },
+    "SUR": {
+        "dem": "steady",
+        "treat_start": 2015,
+        "treat_end": 2020
+    },
+    "SWE": {
+        "dem": "steady",
+        "treat_start": 2011,
+        "treat_end": 2014
+    },
+    "TTO": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2011
+    },
+    "URY": {
+        "dem": "steady",
+        "treat_start": 2011,
+        "treat_end": 2015
+    },
+    "USA": {
+        "dem": "steady",
+        "treat_start": 2013,
+        "treat_end": 2017
+    },
+    "ZAF": {
+        "dem": "steady",
+        "treat_start": 2008,
+        "treat_end": 2013
+    }
+}

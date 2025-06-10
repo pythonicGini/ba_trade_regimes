@@ -13,8 +13,11 @@ min_change_ert = 0.1
 start_year = 2000
 
 # Predefined country groupings for plotting
-with open("0_chosen_countries.json", "r") as f:
-    choices = json.load(f)
+if os.path.exists("0_chosen_countries.json"):
+    with open("0_chosen_countries.json", "r") as f:
+        choices = json.load(f)
+else:
+    choices = {}
 
 # Folder where plots will be saved
 plot_folder = f"./1_plots/"
