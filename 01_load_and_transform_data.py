@@ -1,103 +1,94 @@
-# These lines bring in tools to help work with data, numbers, and graphs
 import json
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-# These are values used later to make decisions about what kind of countries we're dealing with
-THRESHOLD_BACKSLIDING = 0.5  # If democracy falls below this after being higher, we say it's "backsliding"
-THRESHOLD_STEADY = 0.5  # A steady country should be at or above this level
-MIN_CHANGE = 0.1  # We care about changes bigger than this number
-START_YEAR = 2000  # We only want to look at data from this year onward
+# Threshold values are defined for categorizing countries based on democratic trends
+THRESHOLD_BACKSLIDING = 0.5
+THRESHOLD_STEADY = 0.5
+MIN_CHANGE = 0.1
+START_YEAR = 2000
 
-# This is a list of countries we don’t want to include in our analysis
+# List of countries to be excluded from analysis
 IGNORE_COUNTRIES = [
     "TWN"
 ]
 
-
-# This is where the program starts running
+# Main procedure for processing data and generating visual output
 def main() -> None:
-    # Read in a file containing raw data about democracy scores
+    # Dataset is loaded and filtered for years starting from the specified threshold
     df_ert_raw = pd.read_csv("0_raw_data/ert.csv", encoding="UTF-8")
-
-    # Keep only the data from the year 2000 and later
     df_ert_raw = df_ert_raw[df_ert_raw["year"] >= START_YEAR]
 
-    # Find out which countries are steady or backsliding
+    # Relevant countries are identified and separated based on democracy trends
     relevant_countries = get_relevant_countries(df_ert_raw)
 
-    # Make a graph to show how democracy is changing, split by continent
+    # Visualization is created based on continent and country status
     plot_by_continents(df_ert_raw, relevant_countries)
     return
 
-
-# This function figures out which countries are worth focusing on
+# Function to determine and return relevant countries categorized as "steady" or "backsliding"
 def get_relevant_countries(df_ert: pd.DataFrame) -> dict:
-    # Prepare two empty lists to hold countries that are steady or backsliding
     valid_countries = {
         "backsliding": [],
         "steady": []
     }
 
-    # Go through each country in the data
+    # Each country in the dataset is evaluated
     for country in df_ert["country_text_id"].unique():
         if country in IGNORE_COUNTRIES:
-            continue  # Skip countries we want to ignore
+            continue
 
-        # Get all the data for one country
+        # Dataset is filtered for the current country
         df_country = df_ert[df_ert["country_text_id"] == country].reset_index()
-
-        # Find the highest and lowest democracy score for this country
         max_regime = df_country["v2x_polyarchy"].max()
         min_regime = df_country["v2x_polyarchy"].min()
 
-        # If the country's democracy level didn’t change much and was generally high, mark it as "steady"
+        # Countries with minimal regime change and meeting a democratic threshold are classified as steady
         if (max_regime - min_regime <= MIN_CHANGE) and (min_regime >= THRESHOLD_STEADY):
             valid_countries["steady"].append(country)
             continue
 
-        # If the country's democracy score went down significantly, mark it as "backsliding"
+        # Countries showing significant democratic decline are classified as backsliding
         if is_backsliding(df_country):
             valid_countries["backsliding"].append(country)
 
-    # Sort the countries alphabetically
+    # Alphabetical sorting of countries in both categories
     valid_countries["steady"].sort()
     valid_countries["backsliding"].sort()
 
-    # Save the results into a file so they can be used again later
+    # Result is saved to a JSON file
     with open("00_steady_and_backsliding_countries.json", "w") as outfile:
         json.dump(valid_countries, outfile, indent=4)
+
     return valid_countries
 
-
-# This checks if a country's democracy score got worse over time
+# Function to assess whether a country exhibits democratic backsliding
 def is_backsliding(df: pd.DataFrame) -> bool:
     for i, val in enumerate(df['v2x_polyarchy']):
         if val > THRESHOLD_BACKSLIDING:
-            # If any later score is at least MIN_CHANGE lower, then it's backsliding
+            # Any subsequent year with a drop exceeding the minimum change is checked
             threshold = val - MIN_CHANGE
             if (df['v2x_polyarchy'].iloc[i + 1:] <= threshold).any():
                 return True
     return False
 
-
-# This makes a visual graph of the countries’ democracy scores, grouped by continent
+# Function to create an interactive plot grouped by continents and democracy trends
 def plot_by_continents(df_ert: pd.DataFrame, relevant_countries: dict) -> None:
-    # Rearrange the country data to make it easier to work with
+    # Mapping of countries to their classification
     i_relevant_countries = invert_list_dict(relevant_countries)
 
-    # Get info about which country belongs to which continent
+    # Dictionary linking country codes to continents is retrieved
     cont_dict = get_continent_dict()
     unique_conts = set(cont_dict.values())
     traces = []
 
-    # Make a line for each country on the graph
+    # Plot trace is created for each country
     for country in i_relevant_countries.keys():
         country_df = df_ert[df_ert["country_text_id"] == country]
         trace = go.Scatter(
-            x=country_df['year'],  # years go on the x-axis
-            y=country_df['v2x_polyarchy'],  # democracy scores go on the y-axis
+            x=country_df['year'],
+            y=country_df['v2x_polyarchy'],
             mode='lines+markers',
             name=f"{country} ({i_relevant_countries[country][:1]})",
             text=f"{country_df['country_name'].iloc[0]} ({country})",
@@ -108,38 +99,44 @@ def plot_by_continents(df_ert: pd.DataFrame, relevant_countries: dict) -> None:
 
     buttons = []
 
-    # Create button to show all countries
+    # Button to display all countries
     buttons.append(dict(label="All Countries",
                         method="update",
                         args=[{"visible": [True] * len(traces)},
                               {"title": {"text": "Democracy Index for all relevant Country"}}]))
 
-    # Create buttons to filter by continent
+    # Buttons to filter data by continent
     for cont in unique_conts:
         visible = []
         for trace in traces:
-            visible.append(trace.meta["Cont"] == cont)
+            if trace.meta["Cont"] == cont:
+                visible.append(True)
+            else:
+                visible.append(False)
 
         buttons.append(dict(label=f"{cont}",
                             method="update",
                             args=[{"visible": visible},
                                   {"title": {"text": f"Democracy Index for Continent {cont}"}}]))
 
-    # Create buttons to filter by whether countries are steady or backsliding
+    # Buttons to filter data by democracy status
     for status in ["backsliding", "steady"]:
         visible = []
         for trace in traces:
-            visible.append(trace.meta["Status"] == status)
+            if trace.meta["Status"] == status:
+                visible.append(True)
+            else:
+                visible.append(False)
 
         buttons.append(dict(label=f"{status} countries",
                             method="update",
                             args=[{"visible": visible},
                                   {"title": {"text": f"Democracy Index for {status} countries"}}]))
 
-    # Put all the country lines onto the graph
+    # Figure object is created with all traces
     fig = go.Figure(data=traces)
 
-    # Add a dashed red line to show the threshold where backsliding is considered
+    # A reference line for the backsliding threshold is added
     fig.add_shape(
         type="line",
         x0=df_ert['year'].min(), x1=df_ert['year'].max(),
@@ -147,16 +144,18 @@ def plot_by_continents(df_ert: pd.DataFrame, relevant_countries: dict) -> None:
         line=dict(color="Red", width=2, dash="dash"),
     )
 
-    # Set how the graph looks, including the title, axis labels, and filter buttons
+    # Layout of the visualization is updated with interactive menu
     fig.update_layout(
         updatemenus=[{
             "buttons": buttons,
             "direction": "down",
             "showactive": True,
             "x": 0.5,
-            "xanchor": "auto",
-            "y": 1.1,
-            "yanchor": "auto",
+            "xanchor": "center",
+            "y": 1.15,
+            "yanchor": "top",
+            "pad": {"r": 10, "t": 10},
+            "bgcolor": "lightgray",
             "bordercolor": "black",
             "borderwidth": 1,
             "font": {"size": 14, "color": "black"}
@@ -168,12 +167,12 @@ def plot_by_continents(df_ert: pd.DataFrame, relevant_countries: dict) -> None:
         showlegend=True
     )
 
-    # Show the finished graph
-    fig.show()
+    # Display of the final figure
+    fig.write_html("1_plots/plot_with_filters.html")
+
     return
 
-
-# This flips a list-of-lists structure, making it easier to look up info by country
+# Function to invert dictionary structure from key->list to item->key
 def invert_list_dict(relevant_countries: dict) -> dict:
     inverted_countries = {}
     for key in relevant_countries.keys():
@@ -181,14 +180,12 @@ def invert_list_dict(relevant_countries: dict) -> dict:
             inverted_countries[value] = key
     return inverted_countries
 
-
-# This reads a file that connects countries to continents and flips the data for easy use
+# Function to load continent mapping and return an inverted dictionary
 def get_continent_dict() -> dict:
     with open("0_iso3_by_continent.json", "r") as infile:
         json_data = json.load(infile)
     return invert_list_dict(json_data)
 
-
-# This tells the computer to start everything by running the main() function
+# Execution of the main function when the script is run directly
 if __name__ == "__main__":
     main()
