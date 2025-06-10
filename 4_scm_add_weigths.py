@@ -23,14 +23,14 @@ PREDICTORS = [
         "Control of Corruption: Estimate [CC.EST]",
         # "External debt stocks (% of GNI) [DT.DOD.DECT.GN.ZS]",
         "Inflation, consumer prices (annual %) [FP.CPI.TOTL.ZG]",
-        "General government final consumption expenditure (% of GDP) [NE.CON.GOVT.ZS]",
+        #"General government final consumption expenditure (% of GDP) [NE.CON.GOVT.ZS]",
         #"Trade (% of GDP) [NE.TRD.GNFS.ZS]",
-        "Tax revenue (% of GDP) [GC.TAX.TOTL.GD.ZS]",
+        #"Tax revenue (% of GDP) [GC.TAX.TOTL.GD.ZS]",
         # "Literacy rate, adult total (% of people ages 15 and above) [SE.ADT.LITR.ZS]",
         "Life expectancy at birth, total (years) [SP.DYN.LE00.IN]",
-        "Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population) [SI.POV.DDAY]",
+        #"Poverty headcount ratio at $2.15 a day (2017 PPP) (% of population) [SI.POV.DDAY]",
         #"Taxes on international trade (% of revenue) [GC.TAX.INTT.RV.ZS]",
-        "Tariff rate, applied, simple mean, all products (%) [TM.TAX.MRCH.SM.AR.ZS]",
+        #"Tariff rate, applied, simple mean, all products (%) [TM.TAX.MRCH.SM.AR.ZS]",
         "Rule of Law: Percentile Rank [RL.PER.RNK]",
         "Regulatory Quality: Percentile Rank [RQ.PER.RNK]",
         "Political Stability and Absence of Violence/Terrorism: Percentile Rank [PV.PER.RNK]"
@@ -58,7 +58,7 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     for index, value in control.isnull().sum().items():
         if value > len(control) * 0.1:
             print(control.isnull().sum())
-            raise Exception(f"To many NA Values in column {index}")
+            raise Exception(f"Too many NA Values in column {index}")
         elif value > 0:
             mean = control[index].mean()
             control[index] = control[index].fillna(mean)
@@ -66,7 +66,7 @@ def load_and_pre_filter_weight_data() -> (pd.DataFrame, pd.DataFrame):
     for index, value in treated.isnull().sum().items():
         if value > len(treated) * 0.1:
             print(treated.isnull().sum())
-            raise Exception(f"To many NA Values in column {index}")
+            raise Exception(f"Too many NA Values in column {index}")
 
     return control, treated
 
