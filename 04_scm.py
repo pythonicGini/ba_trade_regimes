@@ -36,11 +36,13 @@ def main() -> None:
     for country, values in relevant_countries.items():
         treat_start = values["treat_start"]
         treat_end = values["treat_end"]
+        df_local_trade_data = df_trade_data.copy()
+        df_local_weights =df_weights.copy()
 
         if not treat_start or not treat_end:
             continue
 
-        control_weights = df_weights[(df_weights["Country Code"] == country) | (df_weights["Country Code"].isin(control_countries))]
+        control_weights = df_local_weights[(df_local_weights["Country Code"] == country) | (df_local_weights["Country Code"].isin(control_countries))]
         control_weights = control_weights[control_weights["Time"] < treat_start]
         relevant_cols = [col for col in control_weights.columns.tolist() if col not in ["Country Code", "Time"]]
 
@@ -51,10 +53,11 @@ def main() -> None:
 
         control_indicies = [i for i in range(len(X_all_scaled)) if i != treated_index]
 
-        control_countries = [X_all.iloc[x].name for x in control_indicies]
+        local_control_countries = [X_all.iloc[x].name for x in control_indicies]
 
         X_control_scaled = X_all_scaled[control_indicies]
         X_treated_scaled = X_all_scaled[treated_index]
+
         try:
             ridge = Ridge(alpha=1, fit_intercept=False, positive=True)
             ridge.fit(X_control_scaled.T, X_treated_scaled.T)
@@ -64,17 +67,18 @@ def main() -> None:
         weights = ridge.coef_
         weights /= weights.sum()
 
-        weights_countries = {x: y for x, y in zip(control_countries, weights)}
 
-        df_trade_control = df_trade_data[df_trade_data["reporterISO"].isin(control_countries)].copy()
-        df_trade_control = df_trade_data[df_trade_data["refYear"] < 2024].copy()
+        weights_countries = {x: y for x, y in zip(local_control_countries, weights)}
+
+        df_trade_control = df_local_trade_data[df_local_trade_data["reporterISO"].isin(local_control_countries)]
+        df_trade_control = df_trade_control[df_trade_control["refYear"] < 2024]
         df_trade_control["weight"] = df_trade_control["reporterISO"].map(weights_countries)
         df_trade_control["weighted_share"] = df_trade_control["weight"] * df_trade_control["share"]
         synthetic_control = df_trade_control.groupby(["refYear", "flowCode", "v2x_regime"])["weighted_share"].sum()
         synthetic_control = synthetic_control.reset_index()
 
 
-        df_country = df_trade_data.loc[df_trade_data["reporterISO"] == country]
+        df_country = df_local_trade_data.loc[df_local_trade_data["reporterISO"] == country]
 
         treat_start_line = go.Scatter(
             x=[treat_start] * 100,
@@ -154,11 +158,17 @@ def main() -> None:
 
     for country in defined_countries:
         visibility = []
+
         for trace in fig.data:
             if trace.meta == country:
                 visibility.append(True)
             else:
                 visibility.append(False)
+
+        fig_small = fig
+        for trace, visible in zip(fig_small.data, visibility):
+            trace.visible = visible
+        fig_small.write_image(f"images/{country}.png", width=1280, height=720)
 
         buttons.append(dict(
             label=country,
