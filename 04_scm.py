@@ -1,3 +1,5 @@
+import os.path
+
 import pandas as pd
 import json
 import random
@@ -8,6 +10,8 @@ import plotly.graph_objects as go
 
 
 def main() -> None:
+    create_country_treatments()
+
     with open("00_treatment_countries.json", "r") as f:
         relevant_countries = json.load(f)
 
@@ -142,7 +146,13 @@ def main() -> None:
         args=[{"visible": visibility}],
     ))
 
-    for country in relevant_countries.keys():
+    defined_countries = []
+    for trace in fig.data:
+        if trace.meta not in defined_countries:
+            defined_countries.append(trace.meta)
+
+
+    for country in defined_countries:
         visibility = []
         for trace in fig.data:
             if trace.meta == country:
@@ -198,6 +208,12 @@ def create_country_treatments():
                         "treat_start": treat_start,
                         "treat_end": treat_end,
                     }
+
+    if os.path.exists("00_treatment_countries.json"):
+        with open("00_treatment_countries.json", "r") as f:
+            defined_countries = json.load(f)
+            relevant_countries.update(defined_countries)
+
     with open("00_treatment_countries.json", "w") as f:
         json.dump(relevant_countries, f, indent=4)
 
