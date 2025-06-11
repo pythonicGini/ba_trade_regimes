@@ -11,13 +11,13 @@
     },
     "BEN": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2017,
+        "treat_end": 2021
     },
     "BFA": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2016,
+        "treat_end": 2023
     },
     "BGD": {
         "dem": "backsliding",
@@ -26,28 +26,28 @@
     },
     "BGR": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2008,
+        "treat_end": 2020
     },
     "BIH": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2006,
+        "treat_end": 2018
     },
     "BOL": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2009,
+        "treat_end": 2020
     },
     "BRA": {
         "dem": "backsliding",
         "treat_start": 2014,
-        "treat_end": 2019
+        "treat_end": 2021
     },
     "BWA": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2016,
+        "treat_end": 2020
     },
     "CIV": {
         "dem": "backsliding",
@@ -56,8 +56,8 @@
     },
     "CZE": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2012,
+        "treat_end": 2021
     },
     "DOM": {
         "dem": "backsliding",
@@ -66,8 +66,8 @@
     },
     "ECU": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2006,
+        "treat_end": 2015
     },
     "FJI": {
         "dem": "backsliding",
@@ -81,8 +81,8 @@
     },
     "GHA": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2012,
+        "treat_end": 2021
     },
     "GNB": {
         "dem": "backsliding",
@@ -91,13 +91,13 @@
     },
     "GRC": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2012,
+        "treat_end": 2021
     },
     "GTM": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2012,
+        "treat_end": 2022
     },
     "GUY": {
         "dem": "backsliding",
@@ -106,28 +106,28 @@
     },
     "HND": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2005,
+        "treat_end": 2010
     },
     "HRV": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2012,
+        "treat_end": 2018
     },
     "HUN": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2009,
+        "treat_end": 2018
     },
     "IDN": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2008,
+        "treat_end": 2021
     },
     "IND": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2008,
+        "treat_end": 2021
     },
     "KEN": {
         "dem": "backsliding",
@@ -136,8 +136,8 @@
     },
     "KOR": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2007,
+        "treat_end": 2014
     },
     "LBY": {
         "dem": "backsliding",
@@ -191,8 +191,8 @@
     },
     "MUS": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2018,
+        "treat_end": 2022
     },
     "NER": {
         "dem": "backsliding",
@@ -201,8 +201,8 @@
     },
     "NIC": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2005,
+        "treat_end": 2019
     },
     "NPL": {
         "dem": "backsliding",
@@ -216,13 +216,13 @@
     },
     "PHL": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2015,
+        "treat_end": 2020
     },
     "POL": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2015,
+        "treat_end": 2022
     },
     "PSE": {
         "dem": "backsliding",
@@ -246,8 +246,8 @@
     },
     "SLV": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2017,
+        "treat_end": 2022
     },
     "SRB": {
         "dem": "backsliding",
@@ -261,8 +261,8 @@
     },
     "SVN": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2015,
+        "treat_end": 2021
     },
     "THA": {
         "dem": "backsliding",
@@ -276,8 +276,8 @@
     },
     "TUR": {
         "dem": "backsliding",
-        "treat_start": null,
-        "treat_end": null
+        "treat_start": 2007,
+        "treat_end": 2017
     },
     "UKR": {
         "dem": "backsliding",

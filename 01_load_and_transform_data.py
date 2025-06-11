@@ -11,7 +11,7 @@ START_YEAR = 2000
 
 # List of countries to be excluded from analysis
 IGNORE_COUNTRIES = [
-    "TWN"
+    "TWN", "ARG", "ARM", "BGD", "CIV", "FJI", "GEO", "GNB", "GUY", "KEN", "LBY", "LKA", "LSO", "MDA", "MDG", "MEX", "MKD", "MLI", "MNG", "NER", "NPL", "PER", "PSE", "ROU", "SEN", "SLE", "SRB", "SVK", "THA", "TUN", "UKR", "VEN", "ZMB"
 ]
 
 # Main procedure for processing data and generating visual output
